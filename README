@@ -1,0 +1,20 @@
+Validates Word Count
+====================
+
+When validating a string item, ensure the word count is in a specified range.
+
+Example
+=======
+
+class Person < ActiveRecord::Base
+	validates_word_count :name, :minimum => 2, :range_message => "your name is too short (must be %d words)"
+end
+
+p = Person.new(:name => "Bob")
+p.valid?   # false
+p = Person.new(:name => "John Doe")
+p.valid?   # true
+
+
+
+Copyright 2010 Paul Schreiber, released under the MIT license
