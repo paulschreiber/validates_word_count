@@ -45,6 +45,8 @@ module ActiveRecord
         too_many_words = configuration[:too_many_words] % maximum unless maximum.nil?
 
         validates_each(args, configuration) do |record, attr_name, value|
+          next if value.nil?
+
           # remove HTML tags; convert HTML entities to spaces; remove punctuation
           cleaned_text = value.gsub(/<.[^<>]*?>/, ' ').gsub(/&nbsp;|&#160;/i, ' ').gsub(/[.(),;:!?%#$'"_+=\/-]*/,'')
           word_count = cleaned_text.scan(/[\w-]+/).size
