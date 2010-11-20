@@ -7,7 +7,7 @@ Example
 =======
 
 class Person < ActiveRecord::Base
-	validates_word_count :name, :minimum => 2, :range_message => "your name is too short (must be %d words)"
+	validates_word_count :name, :minimum => 2, :too_few_words => "your name is too short (must be %d words)"
 end
 
 p = Person.new(:name => "Bob")
