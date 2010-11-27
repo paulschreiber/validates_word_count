@@ -4,10 +4,8 @@ module ActiveRecord
 
       def validates_word_count(*args)
         configuration = {
-                          # :too_few_words  => I18n.translate('validates_word_count.errors.messages.too_few_words'),
-                          # :too_many_words => I18n.translate('validates_word_count.errors.messages.too_many_words'),
-                          :too_few_words  => "has too few words (minimum is %d words)",
-                          :too_many_words => "has too many words (maximum is %d words)",
+                          :too_few_words  => I18n.translate('validates_word_count.errors.messages.too_few_words'),
+                          :too_many_words => I18n.translate('validates_word_count.errors.messages.too_many_words'),
                           :on => :save, :with => nil
                         }
         configuration.update(args.pop) if args.last.is_a?(Hash)
