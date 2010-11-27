@@ -3,11 +3,7 @@ module ActiveRecord
     module ClassMethods
 
       def validates_word_count(*args)
-        configuration = {
-                          :too_few_words  => I18n.translate('validates_word_count.errors.messages.too_few_words'),
-                          :too_many_words => I18n.translate('validates_word_count.errors.messages.too_many_words'),
-                          :on => :save, :with => nil
-                        }
+        configuration = { :on => :save, :with => nil}
         configuration.update(args.pop) if args.last.is_a?(Hash)
 
         maximum = minimum = nil
@@ -39,22 +35,34 @@ module ActiveRecord
           end
         end
         
-        too_few_words  = configuration[:too_few_words]  % minimum unless minimum.nil?
-        too_many_words = configuration[:too_many_words] % maximum unless maximum.nil?
-
         validates_each(args, configuration) do |record, attr_name, value|
           next if value.nil?
-
+          
           # remove HTML tags; convert HTML entities to spaces; remove punctuation
           cleaned_text = value.gsub(/<.[^<>]*?>/, ' ').gsub(/&nbsp;|&#160;/i, ' ').gsub(/[.(),;:!?%#$'"_+=\/-]*/,'')
           word_count = cleaned_text.scan(/[\w-]+/).size
-                    
-          unless maximum.nil?
-            record.errors.add(attr_name, too_many_words) if word_count > maximum
-          end
+          
+          # to determine the error message:
+          # - look for something passed in as a parameter (:too_many_words => "")
+          # - look for a translation of something attribute-sepecific (likely in the app's en.yml)
+          # - look for a translation of something model-sepecific (likely in the app's en.yml)
+          # - look for a translation of the default error message (likely in the plugin's en.yml)
+          if !maximum.nil? and (word_count > maximum)
+            if configuration.has_key?(:too_many_words)
+              message = configuration[:too_many_words]
+            else
+              message = I18n.t("activerecord.errors.models.#{name.underscore}.attributes.#{attr_name}.too_many_words", :words => maximum,
+              :default => [:"activerecord.errors.models.#{name.underscore}.too_many_words", :'activerecord.errors.messages.too_many_words'])
+            end
+            record.errors.add(attr_name, message)
 
-          unless minimum.nil?
-            record.errors.add(attr_name, too_few_words) if word_count < minimum
+          elsif !minimum.nil? and (word_count < minimum)
+            if configuration.has_key?(:too_few_words)
+              message = configuration[:too_few_words]
+            else
+              message = I18n.t("activerecord.errors.models.#{name.underscore}.attributes.#{attr_name}.too_few_words", :words => minimum,
+              :default => [:"activerecord.errors.models.#{name.underscore}.too_few_words", :'activerecord.errors.messages.too_few_words'])
+            end
           end
             
         end # validates_each

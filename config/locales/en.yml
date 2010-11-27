@@ -1,8 +1,8 @@
 en:
-  validates_word_count:
+  activerecord:
     errors:
       # The values :model, :attribute and :value are always available for interpolation
       # The value :count is available when applicable. Can be used for pluralization.
       messages:
-        too_few_words: "has too few words (minimum is %d words)"
-        too_many_words: "has too many words (maximum is %d words)"
+        too_few_words: "has too few words (minimum is %{words} words)"
+        too_many_words: "has too many words (maximum is %{words} words)"

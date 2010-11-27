@@ -7,7 +7,9 @@ Example
 =======
 
 class Person < ActiveRecord::Base
-	validates_word_count :name, :minimum => 2, :too_few_words => "your name is too short (must be %d words)"
+  validates_word_count :name,
+      :minimum => 2, :too_few_words => "your name is too short (must be 2 words)",
+      :maximum => 4, :too_many_words => "your name is too long (must be less than 4 words)"
 end
 
 p = Person.new(:name => "Bob")
@@ -15,6 +17,32 @@ p.valid?   # false
 p = Person.new(:name => "John Doe")
 p.valid?   # true
 
+Localization
+============
+If you don't provide a configuration option (i.e. :too_many_words), validates_word_count use
+Rails' I18n system to find the right string. It will try three strings:
+1. activerecord.errors.models.#{class_name}.attributes.#{attribute_name}.too_many_words
+   i.e. activerecord.errors.models.person.attributes.name.too_many_words
+2. activerecord.errors.models.#{class_name}.too_many_words
+   i.e. activerecord.errors.models.person.too_many_words
+3. activerecord.errors.messages.too_many_words (this is supplied in the plugin)
+
+Here are example en.yml files corresponding to (1) and (2):
+en:
+  activerecord:
+    errors:
+      models:
+        person:
+          attributes:
+            name:
+              too_many_words: "enter your name in %{words} words or less"
+
+en:
+  activerecord:
+    errors:
+      models:
+        person:
+          too_many_words: "enter your name in %{words} words or less"
 
 
 Copyright 2010 Paul Schreiber, released under the MIT license
