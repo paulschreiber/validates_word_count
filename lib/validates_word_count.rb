@@ -43,26 +43,22 @@ module ActiveRecord
           word_count = cleaned_text.scan(/[\w-]+/).size
           
           # to determine the error message:
-          # - look for something passed in as a parameter (:too_many_words => "")
           # - look for a translation of something attribute-sepecific (likely in the app's en.yml)
           # - look for a translation of something model-sepecific (likely in the app's en.yml)
+          # - look for something passed in as a parameter (:too_many_words => "")
           # - look for a translation of the default error message (likely in the plugin's en.yml)
           if !maximum.nil? and (word_count > maximum)
-            if configuration.has_key?(:too_many_words)
-              message = configuration[:too_many_words]
-            else
-              message = I18n.t("activerecord.errors.models.#{name.underscore}.attributes.#{attr_name}.too_many_words", :words => maximum,
-              :default => [:"activerecord.errors.models.#{name.underscore}.too_many_words", :'activerecord.errors.messages.too_many_words'])
-            end
+            message = I18n.t("activerecord.errors.models.#{name.underscore}.attributes.#{attr_name}.too_many_words", :words => maximum,
+                        :default => [:"activerecord.errors.models.#{name.underscore}.too_many_words",
+                                    configuration[:too_many_words],
+                                    :'activerecord.errors.messages.too_many_words'])
             record.errors.add(attr_name, message)
 
           elsif !minimum.nil? and (word_count < minimum)
-            if configuration.has_key?(:too_few_words)
-              message = configuration[:too_few_words]
-            else
-              message = I18n.t("activerecord.errors.models.#{name.underscore}.attributes.#{attr_name}.too_few_words", :words => minimum,
-              :default => [:"activerecord.errors.models.#{name.underscore}.too_few_words", :'activerecord.errors.messages.too_few_words'])
-            end
+            message = I18n.t("activerecord.errors.models.#{name.underscore}.attributes.#{attr_name}.too_few_words", :words => minimum,
+                        :default => [:"activerecord.errors.models.#{name.underscore}.too_few_words",
+                            configuration[:too_few_words],
+                           :'activerecord.errors.messages.too_few_words'])
           end
             
         end # validates_each
