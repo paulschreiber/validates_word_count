@@ -59,7 +59,8 @@ module ActiveRecord
                         :default => [:"activerecord.errors.models.#{name.underscore}.too_few_words",
                             configuration[:too_few_words],
                            :'activerecord.errors.messages.too_few_words'])
-          end
+           record.errors.add(attr_name, message)
+        end
             
         end # validates_each
       end # validates_at_least_one
