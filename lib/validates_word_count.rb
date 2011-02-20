@@ -39,7 +39,7 @@ module ActiveRecord
           next if value.nil?
           
           # remove HTML tags; convert HTML entities to spaces; remove punctuation
-          cleaned_text = value.gsub(/<.[^<>]*?>/, ' ').gsub(/&nbsp;|&#160;/i, ' ').gsub(/[.(),;:!?%#$'"_+=\/-]*/,'')
+          cleaned_text = value.gsub(/<.[^<>]*?>/, ' ').gsub(/&nbsp;|&#160;/i, ' ').gsub(/[.(),;:!?%#$‘’“”\'"_+=\/-]*/,'')
           word_count = cleaned_text.scan(/[\w-]+/).size
           
           # to determine the error message:
