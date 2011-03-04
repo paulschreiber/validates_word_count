@@ -17,6 +17,17 @@ p.valid?   # false
 p = Person.new(:name => "John Doe")
 p.valid?   # true
 
+You can also supply an :item_name parameter to customize the error message
+
+class MyItem < ActiveRecord::Base
+  validates_word_count :prompt, :minimum => 3, :item_name => :activity
+end
+
+i = MyItem.new(:activity => "cooking", :prompt => "I like green eggs and ham")
+i.valid? # false
+ --> describe what prompted your interest in cooking in 20 words or fewer
+
+
 Localization
 ============
 If you don't provide a configuration option (i.e. :too_many_words), validates_word_count use
@@ -44,5 +55,20 @@ en:
         person:
           too_many_words: "enter your name in %{words} words or less"
 
+Here's what the en.yml would look like when you use :item_name -- note the _with_name suffix on the attribute name.
 
-Copyright 2010 Paul Schreiber, released under the MIT license
+en:
+  activerecord:
+    errors:
+      models:
+        myitem:
+          attributes:
+            prompt_with_name:
+              blank: "enter what prompted your interest in %{name}"
+              too_many_words: "describe what prompted your interest in %{name} in %{words} words or fewer"
+            prompt:
+              blank: "enter what prompted your interest"
+              too_many_words: "describe what prompted your interest in %{words} words or fewer"
+
+
+Copyright 2010-11 Paul Schreiber, released under the MIT license
