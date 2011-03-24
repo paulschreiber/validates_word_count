@@ -3,7 +3,7 @@ module ActiveRecord
     module ClassMethods
       
       def validates_word_count(*args)
-        configuration = {:on => :save, :with => nil}
+        configuration = { :with => nil }
         configuration.update(args.pop) if args.last.is_a?(Hash)
 
         maximum = minimum = item_name = nil
