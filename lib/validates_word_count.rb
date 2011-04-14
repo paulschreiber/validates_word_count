@@ -1,9 +1,17 @@
 module ActiveRecord
   module Validations
     module ClassMethods
+      TAG_RE = /<.[^<>]*?>/
+      PUNCTUATION_RE = /[–—.(),;:!?%#$‘’“”\'"_+=\/-]*/
+      WHITESPACE_RE = /(&nbsp;|&#160;|[ ])+/i
+      
+      def word_count_for_string(s)
+        cleaned_text = s.gsub(TAG_RE, ' ').gsub(PUNCTUATION_RE,'').gsub(WHITESPACE_RE, ' ')
+        cleaned_text.scan(/[\w-]+/).size
+      end
       
       def validates_word_count(*args)
-        configuration = { :with => nil }
+        configuration = {:on => :save, :with => nil}
         configuration.update(args.pop) if args.last.is_a?(Hash)
 
         maximum = minimum = item_name = nil
@@ -38,9 +46,7 @@ module ActiveRecord
         validates_each(args, configuration) do |record, attr_name, value|
           next if value.nil?
           
-          # remove HTML tags; convert HTML entities to spaces; remove punctuation
-          cleaned_text = value.gsub(/<.[^<>]*?>/, ' ').gsub(/[–—.(),;:!?%#$‘’“”\'"_+=\/-]*/,'').gsub(/(&nbsp;|&#160;|[ ])+/i, ' ')
-          word_count = cleaned_text.scan(/[\w-]+/).size
+          word_count = word_count_for_string(value)
 
           # if we can know what attribute is too long/short, use a _with_name
           # error message to help the user
