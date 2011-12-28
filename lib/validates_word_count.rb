@@ -7,7 +7,7 @@ module ActiveRecord
       
       def word_count_for_string(s)
         cleaned_text = s.gsub(TAG_RE, ' ').gsub(PUNCTUATION_RE,'').gsub(WHITESPACE_RE, ' ')
-        cleaned_text.scan(/[\w-]+/).size
+        cleaned_text.scan(/\w+/).size
       end
       
       def validates_word_count(*args)
